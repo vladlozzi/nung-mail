@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_name: MyString
+  last_name: MyString
+  first_name_lat: MyString
+  last_name_lat: MyString
+  graduate_at: 1
+  mobile_number: MyString
+  academic_group: MyString
+  faculty_name: MyString
+  edebo_study_card: 1
+  edebo_person_card: 1
+
+two:
+  first_name: MyString
+  last_name: MyString
+  first_name_lat: MyString
+  last_name_lat: MyString
+  graduate_at: 1
+  mobile_number: MyString
+  academic_group: MyString
+  faculty_name: MyString
+  edebo_study_card: 1
+  edebo_person_card: 1

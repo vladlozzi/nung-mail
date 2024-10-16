@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  edebo_person_card: 1
+  fullname_birthdate: MyString
+  phone_number: MyString
+  email: MyString
+
+two:
+  edebo_person_card: 1
+  fullname_birthdate: MyString
+  phone_number: MyString
+  email: MyString
