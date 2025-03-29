@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_06_083919) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_05_105620) do
   create_table "applications", force: :cascade do |t|
     t.integer "edebo_person_card", null: false
     t.string "fullname_birthdate", null: false
@@ -42,5 +42,4 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_06_083919) do
     t.datetime "updated_at", null: false
     t.index ["edebo_study_card"], name: "index_students_on_edebo_study_card", unique: true
   end
-
 end
