@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
   FACULTIES = {
     "Інститут архітектури, будівництва та енергетики" => "ІАБЕ",
+    "\"Інститут архітектури та будівництва \"\"ІФНТУНГ-ДонНАБА\"\"\"" => "ІАБ",
     "Інститут гуманітарної підготовки та державного управління" => "ІГПДУ",
     "Інститут економіки та менеджменту" => "ІЕМ",
     "Інститут інженерної механіки та робототехніки" => "ІІМР",
@@ -8,6 +9,8 @@ class HomeController < ApplicationController
     "Інститут нафтогазової інженерії" => "ІНГІ",
     "Інститут післядипломної освіти" => "ІПО",
     "Факультет природничих наук" => "ФПН",
+    "Факультет інформаційних технологій" => "ФІТ",
+    "Факультет автоматизації та енергетики" => "ФАЕ",
     "Центр міжнародної освіти" => "ЦМО",
     "Відділ аспірантури і докторатури" => "ВАД",
   }
@@ -17,7 +20,7 @@ class HomeController < ApplicationController
 
   def emails_table
     table = ""
-    counter = 0
+    accounts = 0
     Student.all.each do |student|
       academic_group_lat = student.academic_group.strip.downcase.gsub('зг', 'zgh').
         to_slug.transliterate(:ukrainian).to_s.delete("-")
@@ -47,11 +50,11 @@ class HomeController < ApplicationController
           FACULTIES[student.faculty_name.strip] + " # " +
           student.academic_group.strip + ";" +
           "TRUE\n"
-        counter += 1
+        accounts += 1
         table += row
       end
     end
 
-    send_data table, filename: "#{counter}EmailAccountsToRegister.csv"
+    send_data table, filename: "#{accounts}EmailAccountsToRegister.csv"
   end
 end
