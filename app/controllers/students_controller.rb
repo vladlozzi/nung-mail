@@ -13,7 +13,9 @@ class StudentsController < ApplicationController
             full_name, birth_date, person_doc_type, person_doc_series, person_doc_number, person_doc_date,
             person_doc_valid_until, gender, citizenship, full_name_en, tax_number, valid_tax_number,
             license_year, study_start, study_finish, receive_date, unit, dual_study,
-            degree, base_degree, study_form, study_payer, did_you_get_degree_in_another_specialty,
+            degree, base_degree, study_form,
+            study_payer, contract_based_study_funded_by_legal_entities,
+            did_obtain_degree_in_another_specialty,
             is_study_period_shortened, specialty, specialization, edu_program_id, edu_program,
             profession, academic_year, academic_group =
             line.delete("\r").delete("\n").split(";")

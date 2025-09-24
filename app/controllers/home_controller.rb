@@ -1,11 +1,13 @@
 class HomeController < ApplicationController
+
+  require 'zip'
+
   FACULTIES = {
     "Інститут архітектури, будівництва та енергетики" => "ІАБЕ",
     "\"Інститут архітектури та будівництва \"\"ІФНТУНГ-ДонНАБА\"\"\"" => "ІАБ",
     "Інститут гуманітарної підготовки та державного управління" => "ІГПДУ",
     "Інститут економіки та менеджменту" => "ІЕМ",
     "Інститут інженерної механіки та робототехніки" => "ІІМР",
-    "Інститут інформаційних технологій" => "ІІТ",
     "Інститут нафтогазової інженерії" => "ІНГІ",
     "Інститут післядипломної освіти" => "ІПО",
     "Факультет природничих наук" => "ФПН",
@@ -19,7 +21,8 @@ class HomeController < ApplicationController
   end
 
   def emails_table
-    table = ""
+    accounts_table = "First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Org Unit Path [Required],Recovery Phone [MUST BE IN THE E.164 FORMAT],Mobile Phone,Employee ID,Department,Change Password at Next Sign-In\n"
+    groups_table = "Group Email [Required],Member Email,Member Role,Member Type\n"
     accounts = 0
     Student.all.each do |student|
       academic_group_lat = student.academic_group.strip.downcase.gsub('зг', 'zgh').
@@ -41,20 +44,31 @@ class HomeController < ApplicationController
         else
           phone_number = "'"
         end
-        row = student.first_name.gsub("`", "'").strip + ";" +
-          student.last_name.gsub("`", "'").strip + ";" +
-          email + ";1234567890;" +
-          "/#{unit_abbr}/Випуск #{student.graduate_at};" +
-          phone_number.strip + ";" + phone_number.strip + ";" +
-          "Студент групи #{student.academic_group} / ЄДЕБО ID #{student.edebo_study_card};" +
-          FACULTIES[student.faculty_name.strip] + " # " +
-          student.academic_group.strip + ";" +
+        account_row = student.first_name.gsub("`", "'").strip + "," +
+          student.last_name.gsub("`", "'").strip + "," +
+          email + ",1234567890," +
+          "/#{unit_abbr}/Випуск #{student.graduate_at}," +
+          phone_number.strip + "," + phone_number.strip + "," +
+          "Студент групи #{student.academic_group} / ЄДЕБО ID #{student.edebo_study_card} / створено #{Time.now.strftime('%Y-%m-%d')}," +
+          FACULTIES[student.faculty_name.strip] + " # " + student.academic_group.strip + "," +
           "TRUE\n"
+        group_row = "students@nung.edu.ua,#{email},MEMBER,USER\n"
         accounts += 1
-        table += row
+        accounts_table += account_row
+        groups_table += group_row
       end
     end
 
-    send_data table, filename: "#{accounts}EmailAccountsToRegister.csv"
+    zip_stream = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry("#{accounts}EmailAccountsToRegister.csv")
+      zip.write(accounts_table)
+
+      zip.put_next_entry("#{accounts}EmailGroupsToRegister.csv")
+      zip.write(groups_table)
+    end
+
+    zip_stream.rewind
+
+    send_data zip_stream.read, filename: "#{accounts}EmailsToRegister.zip", type: 'application/zip'
   end
 end

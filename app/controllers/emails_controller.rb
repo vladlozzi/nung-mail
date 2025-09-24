@@ -8,14 +8,17 @@ class EmailsController < ApplicationController
       Email.truncate
       import_errors = []
       File.foreach(params[:txt_file].path).with_index(1) do |line, index|
-        first_name, last_name, email = line.delete("\r").delete("\n").split(/\t/)
-        email = Email.create(email: email)
-        if email.valid?
-          email_count += 1
-        else
-          import_errors << "Рядок #{index}: " + email.errors.map{ |e|
-            "#{e.full_message} [#{email}]"
-          }.join(" ")
+        if index > 1
+          first_name, last_name, email =
+            ::CSV.parse(line.delete("\r").delete("\n"), col_sep: ',', quote_char: '"').first
+          email = Email.create(email: email)
+          if email.valid?
+            email_count += 1
+          else
+            import_errors << "Рядок #{index}: " + email.errors.map{ |e|
+              "#{e.full_message} [#{email}]"
+            }.join(" ")
+          end
         end
       end
       notice = "З файлу #{params[:txt_file].original_filename} " + "імпортовано #{email_count} " + (

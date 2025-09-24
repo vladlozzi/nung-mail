@@ -1,5 +1,3 @@
-require 'csv'
-
 class ApplicationsController < ApplicationController
   def new_import
   end
@@ -18,9 +16,9 @@ class ApplicationsController < ApplicationController
           confirm_by_sign, confirm_by_sign_date,
           confirm_by_scan, confirm_by_scan_date,
           personal_account_number =
-          CSV.parse(line.delete("\r").delete("\n"), col_sep: ';').first
+          ::CSV.parse(line.delete("\r").delete("\n"), col_sep: ';').first
         if application_status == "До наказу"
-          phone_numbers = "';" if phone_numbers.nil?
+          phone_numbers = "';" if phone_numbers.nil? || phone_numbers.empty?
           phone_number = phone_numbers.split(";").first.gsub(/[\s()-]/, "")
           application = Application.create(
             edebo_person_card: edebo_person_card,
@@ -38,8 +36,8 @@ class ApplicationsController < ApplicationController
         end
       end
       notice = "З файлу #{params[:txt_file].original_filename} " + "імпортовано #{application_count} " + (
-        application_count % 10 == 1 && application_count % 100 != 11 ? "заяву на вступ" : "заяв на вступ"
-      ) + "." + (
+        application_count % 10 == 1 && application_count % 100 != 11 ? "заяву" : "заяв"
+      ) + " на вступ зі статусом \"До наказу\"." + (
         import_errors.empty? ? "" :
           "<br>Виправте помилки у рядках файлу і повторіть імпорт.<br>" + import_errors.join("<br>")
       )
