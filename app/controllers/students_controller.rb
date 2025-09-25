@@ -7,7 +7,7 @@ class StudentsController < ApplicationController
       student_count = 0
       Student.truncate
       import_errors = []
-      File.foreach(params[:txt_file].path).with_index(1) do |line, index|
+      File.foreach(params[:txt_file].path, external_encoding: 'Windows-1251').with_index(1) do |line, index|
         if index > 1
           download_at, edebo_study_card, status_from, study_status, edebo_person_card,
             full_name, birth_date, person_doc_type, person_doc_series, person_doc_number, person_doc_date,

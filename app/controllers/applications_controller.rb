@@ -7,7 +7,7 @@ class ApplicationsController < ApplicationController
       application_count = 0
       Application.truncate
       import_errors = []
-      File.foreach(params[:txt_file].path).with_index(1) do |line, index|
+      File.foreach(params[:txt_file].path, external_encoding: 'Windows-1251').with_index(1) do |line, index|
         app_id, edebo_person_card,
           offer_type, offer_name, degree, base_degree, specialty, specialization, study_form, academic_year,
           unit, is_study_period_shortened, is_application_electronic,
