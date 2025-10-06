@@ -38,6 +38,7 @@ class HomeController < ApplicationController
       email = student.first_name_lat.strip.downcase + "." +
         student.last_name_lat.strip.downcase + "-" +
         academic_group_lat + "@" + domain
+
       unless Email.find_by(email: email)
         application = Application.find_by(edebo_person_card: student.edebo_person_card)
         if application.present?
@@ -45,24 +46,31 @@ class HomeController < ApplicationController
         else
           phone_number = "'"
         end
+
         account_row = student.first_name.gsub("`", "'").strip + "," +
           student.last_name.gsub("`", "'").strip + "," +
           email + ",1234567890," +
           "/#{unit_abbr}/Випуск #{student.graduate_at}," +
-          phone_number.strip + "," + phone_number.strip + "," +
+          phone_number.delete("'").strip + "," + phone_number.delete("'").strip + "," +
           "Студент групи #{student.academic_group} / ЄДЕБО ID #{student.edebo_study_card} / створено #{Time.now.strftime('%Y-%m-%d')}," +
           FACULTIES[student.faculty_name.strip] + " # " + student.academic_group.strip + "," +
           "TRUE\n"
+
         group_row = "students@nung.edu.ua,#{email},MEMBER,USER\n"
+
         account_to_deans_office_row = student.first_name.gsub("`", "'").strip + "," +
           student.last_name.gsub("`", "'").strip + "," +
           email + "," + phone_number.strip + "," +
-          FACULTIES[student.faculty_name.strip] + " # " + student.academic_group.strip + ",\n"
+          FACULTIES[student.faculty_name.strip] + " # " + student.academic_group.strip + "," +
+          ( phone_number =~/\+38063|\+38073|\+38093/ ? "\"Ймовірно, оператор Lifeсell - можливі проблеми з відправленням коду для відновлення\"" : "") +
+          "\n"
+
         accounts += 1
         accounts_table += account_row
         groups_table += group_row
         accounts_table_to_deans_office += account_to_deans_office_row
       end
+
     end
 
     zip_stream = Zip::OutputStream.write_buffer do |zip|
