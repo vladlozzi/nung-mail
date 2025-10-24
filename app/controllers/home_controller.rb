@@ -3,7 +3,6 @@ class HomeController < ApplicationController
   require 'zip'
 
   FACULTIES = {
-    "Інститут архітектури, будівництва та енергетики" => "ІАБЕ",
     "\"Інститут архітектури та будівництва \"\"ІФНТУНГ-ДонНАБА\"\"\"" => "ІАБ",
     "Інститут гуманітарної підготовки та державного управління" => "ІГПДУ",
     "Інститут економіки та менеджменту" => "ІЕМ",
@@ -23,7 +22,7 @@ class HomeController < ApplicationController
   def emails_table
     accounts_table = "First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Org Unit Path [Required],Recovery Phone [MUST BE IN THE E.164 FORMAT],Mobile Phone,Employee ID,Department,Change Password at Next Sign-In\n"
     groups_table = "Group Email [Required],Member Email,Member Role,Member Type\n"
-    accounts_table_to_deans_office = "Ім'я,Прізвище,Адреса електронної пошти,Телефон для відновлення паролю,Інститут/факультет # група,Примітки\n"
+    accounts_table_to_deans_office = "Ім'я,Прізвище,Адреса електронної пошти,Телефон для відновлення пароля,Інститут/факультет # група,Примітки\n"
     accounts = 0
     Student.all.each do |student|
       academic_group_lat = student.academic_group.strip.downcase.gsub('зг', 'zgh').
