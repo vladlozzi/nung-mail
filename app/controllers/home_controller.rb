@@ -43,7 +43,7 @@ class HomeController < ApplicationController
         if application.present?
           phone_number = application.phone_number
         else
-          phone_number = "'"
+          phone_number = "'+"
         end
 
         account_row = student.first_name.gsub("`", "'").strip + "," +
@@ -68,6 +68,8 @@ class HomeController < ApplicationController
         accounts_table += account_row
         groups_table += group_row
         accounts_table_to_deans_office += account_to_deans_office_row
+      else
+        puts "Адресу " + email + " вже зареєстровано в Google Mail"
       end
 
     end
