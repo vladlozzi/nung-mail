@@ -1,0 +1,12 @@
+<% content_for :title, "Editing educational program" %>
+
+<h1>Editing educational program</h1>
+
+<%= render "form", educational_program: @educational_program %>
+
+<br>
+
+<div>
+  <%= link_to "Show this educational program", @educational_program %> |
+  <%= link_to "Back to educational programs", educational_programs_path %>
+</div>

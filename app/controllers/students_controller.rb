@@ -27,7 +27,8 @@ class StudentsController < ApplicationController
           student = Student.create(
             first_name: first_name, last_name: last_name,
             first_name_lat: first_name_lat, last_name_lat: last_name_lat,
-            graduate_at: license_year, mobile_number: "+",
+            graduate_at: license_year, admission_year: study_start[0..3].to_i, study_form: study_form,
+            mobile_number: "+", specialty: specialty, edu_program: edu_program, degree: degree,
             academic_group: academic_group, faculty_name: unit,
             edebo_study_card: edebo_study_card, edebo_person_card: edebo_person_card
           )

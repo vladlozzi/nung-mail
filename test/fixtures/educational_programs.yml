@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  specialty: MyString
+  edu_program: MyString
+  edu_program_abbr: MyString
+
+two:
+  specialty: MyString
+  edu_program: MyString
+  edu_program_abbr: MyString

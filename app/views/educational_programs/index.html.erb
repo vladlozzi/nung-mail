@@ -1,0 +1,17 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Educational programs" %>
+
+<h1>Educational programs</h1>
+
+<div id="educational_programs">
+  <% @educational_programs.each do |educational_program| %>
+    <%= render educational_program %>
+    <p>
+      <%= link_to "Show this educational program", educational_program %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New educational program", new_educational_program_path %> |
+<%= link_to 'Імпорт із текстового файлу', new_import_edu_programs_path %>

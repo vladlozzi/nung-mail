@@ -1,0 +1,32 @@
+<%= form_with(model: educational_program) do |form| %>
+  <% if educational_program.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(educational_program.errors.count, "error") %> prohibited this educational_program from being saved:</h2>
+
+      <ul>
+        <% educational_program.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :specialty, style: "display: block" %>
+    <%= form.text_field :specialty, required: true %>
+  </div>
+
+  <div>
+    <%= form.label :edu_program, "Назва програми (можна залишити порожнім)", style: "display: block" %>
+    <%= form.text_field :edu_program %>
+  </div>
+
+  <div>
+    <%= form.label :edu_program_abbr, "Абревіатура (до 4 символів)", style: "display: block" %>
+    <%= form.text_field :edu_program_abbr, maxlength: 4, required: true %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

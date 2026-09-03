@@ -28,6 +28,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="teacher-by-students-eyes" />
   </component>
   <component name="RModuleSettingsStorage">
     <LOAD_PATH number="0" />
