@@ -16,6 +16,9 @@ class HomeController < ApplicationController
     "Відділ аспірантури і докторатури" => "ВАД",
   }
 
+  LIFECELL_CODE_PATTERN = /\A\+38(063|073|093)/
+  OTHER_UKRAINIAN_MOBILE_CODE_PATTERN = /\A\+38(050|066|067|068|075|077|09[1-9])/
+
   def index
   end
 
@@ -101,7 +104,19 @@ class HomeController < ApplicationController
       ep = edu_program.edu_program_abbr
       ay = student.admission_year.to_s[-2..]
       sf = student.zaochna? ? "z" : ""
-      epaysf = "#{ep}#{ay}#{sf}" # ; puts "epaysf: #{epaysf}"
+      dg = case true
+           when student.jun_bachelor?
+               "j"
+           when student.bachelor?
+             ""
+           when student.master?
+             "m"
+           when student.phd?
+             "phd"
+           else
+             "o"
+           end
+      epaydgsf = "#{ep}#{ay}#{dg}#{sf}" # ; puts "epaydgsf: #{epaydgsf}"
 
       domain = student.faculty_name == "Інститут післядипломної освіти" ? "ipo.nung.edu.ua" : "nung.edu.ua"
       unit_abbr =
@@ -112,18 +127,25 @@ class HomeController < ApplicationController
         end
       email = student.first_name_lat.strip.downcase + "." +
               student.last_name_lat.strip.downcase + "-" +
-              epaysf + "@" + domain
+              epaydgsf + "@" + domain
 
       unless Email.find_by(email: email)
         application = Application.find_by(edebo_person_card: student.edebo_person_card)
         if application.present?
           phone_number = application.phone_number
         else
-          phone_number = "'+"
+          phone_number = ""
         end
         phone_number_to_account =
-          if phone_number.start_with?("'+3800")
-            "'"
+          case phone_number
+          when ""
+            ""
+          when /\A\+3800/
+            ""
+          when LIFECELL_CODE_PATTERN, OTHER_UKRAINIAN_MOBILE_CODE_PATTERN
+            phone_number
+          when /\A\+38/
+            ""
           else
             phone_number
           end
@@ -132,8 +154,8 @@ class HomeController < ApplicationController
                       student.last_name.gsub("`", "'").strip + "," +
                       email + ",1234567890," +
                       "/#{unit_abbr}/Випуск #{student.graduate_at}," +
-                      phone_number_to_account.delete("'").strip + "," +
-                      phone_number_to_account.delete("'").strip + "," +
+                      phone_number_to_account.strip + "," +
+                      phone_number_to_account.strip + "," +
                       "Студент ОП #{ep.upcase} / ЄДЕБО ID #{student.edebo_study_card} / створено #{Time.now.strftime('%Y-%m-%d')}," +
                       FACULTIES[student.faculty_name.strip] + " # ОП " + ep.upcase + "," +
                       "TRUE\n"
@@ -142,18 +164,22 @@ class HomeController < ApplicationController
 
         phone_number_problem =
           case phone_number
-          when /\A'?\z/
-            "У ЄДЕБО відсутній номер телефону - для першого входу в електронну пошту надайте його адміністратору"
-          when /\A'?\+3800/
+          when ""
+            "Відсутній номер мобільного телефону"
+          when /\A\+3800/
             "Помилка в номері телефону: зайвий нуль у коді оператора та відсутня остання цифра"
-          when /\A'?\+380(63|73|93)/
+          when LIFECELL_CODE_PATTERN
             "\"Ймовірно, оператор Lifecell - можливі проблеми з відправленням коду для відновлення\""
+          when OTHER_UKRAINIAN_MOBILE_CODE_PATTERN
+            ""
+          when /\A\+38/
+            "Помилка в номері телефону: невідомий код українського мобільного оператора"
           else
             ""
           end
         account_to_deans_office_row = student.first_name.gsub("`", "'").strip + "," +
                                       student.last_name.gsub("`", "'").strip + "," +
-                                      email + "," + phone_number.strip + "," +
+                                      email + ",'" + phone_number.strip + "," +
                                       FACULTIES[student.faculty_name.strip] + " # ОП " + ep.upcase + "," +
                                       phone_number_problem + "\n"
 

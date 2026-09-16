@@ -3,7 +3,7 @@ class EducationalProgramsController < ApplicationController
 
   # GET /educational_programs or /educational_programs.json
   def index
-    @educational_programs = EducationalProgram.all
+    @educational_programs = EducationalProgram.order(:specialty)
   end
 
   # GET /educational_programs/1 or /educational_programs/1.json

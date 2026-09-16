@@ -23,7 +23,7 @@ class ApplicationsController < ApplicationController
           application = Application.create(
             edebo_person_card: edebo_person_card,
             fullname_birthdate: fullname_birthdate,
-            phone_number: phone_number == "'" ? "'" : "'" + phone_number,
+            phone_number: phone_number.delete_prefix("'"),
             email: email
           )
           if application.valid?
