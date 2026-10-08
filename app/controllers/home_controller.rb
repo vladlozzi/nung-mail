@@ -24,6 +24,11 @@ class HomeController < ApplicationController
 
   def emails_acadgr_table
     accounts_table = "First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Org Unit Path [Required],Recovery Phone [MUST BE IN THE E.164 FORMAT],Mobile Phone,Employee ID,Department,Change Password at Next Sign-In\n"
+    accounts_table = ["First Name [Required]", "Last Name [Required]",
+                      "Email Address [Required]", "Password [Required]",
+                      "Org Unit Path [Required]", "Recovery Phone [MUST BE IN THE E.164 FORMAT]", "Mobile Phone",
+                      "Employee ID", "Employee Title", "Department" , "Change Password at Next Sign-In"
+                     ].join(",") + "\n"
     groups_table = "Group Email [Required],Member Email,Member Role,Member Type\n"
     accounts_table_to_deans_office = "Ім'я,Прізвище,Адреса електронної пошти,Телефон для відновлення пароля,Інститут/факультет # група,Примітки\n"
     accounts = 0
@@ -54,7 +59,8 @@ class HomeController < ApplicationController
           email + ",1234567890," +
           "/#{unit_abbr}/Випуск #{student.graduate_at}," +
           phone_number.delete("'").strip + "," + phone_number.delete("'").strip + "," +
-          "Студент групи #{student.academic_group} / ЄДЕБО ID #{student.edebo_study_card} / створено #{Time.now.strftime('%Y-%m-%d')}," +
+          "#{student.edebo_study_card}," +
+          "Студент групи #{student.academic_group} / створено #{Time.now.strftime('%Y-%m-%d')}," +
           FACULTIES[student.faculty_name.strip] + " # " + student.academic_group.strip + "," +
           "TRUE\n"
 
@@ -94,13 +100,18 @@ class HomeController < ApplicationController
   end
 
   def emails_epysf_table
-    accounts_table = "First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Org Unit Path [Required],Recovery Phone [MUST BE IN THE E.164 FORMAT],Mobile Phone,Employee ID,Department,Change Password at Next Sign-In\n"
+    accounts_table = ["First Name [Required]", "Last Name [Required]",
+                      "Email Address [Required]", "Password [Required]",
+                      "Org Unit Path [Required]", "Recovery Phone [MUST BE IN THE E.164 FORMAT]", "Mobile Phone",
+                      "Employee ID", "Employee Title", "Department" , "Change Password at Next Sign-In"
+                     ].join(",") + "\n"
     groups_table = "Group Email [Required],Member Email,Member Role,Member Type\n"
     accounts_table_to_deans_office = "Ім'я,Прізвище,Адреса електронної пошти,Телефон для відновлення пароля,Інститут/факультет # ОП,Примітки\n"
+
     accounts = 0
     Student.all.each do |student|
       edu_program = EducationalProgram.find_by(specialty: student.specialty, edu_program: student.edu_program)
-      # p edu_program; p student
+      p edu_program; p student
       ep = edu_program.edu_program_abbr
       ay = student.admission_year.to_s[-2..]
       sf = student.zaochna? ? "z" : ""
@@ -150,14 +161,18 @@ class HomeController < ApplicationController
             phone_number
           end
 
+        student_of_program = student.phd? ? "Аспірант ОНП" : "Студент ОП"
+        edu_program_type = student.phd? ? "ОНП" : "ОП"
+
         account_row = student.first_name.gsub("`", "'").strip + "," +
                       student.last_name.gsub("`", "'").strip + "," +
                       email + ",1234567890," +
                       "/#{unit_abbr}/Випуск #{student.graduate_at}," +
                       phone_number_to_account.strip + "," +
                       phone_number_to_account.strip + "," +
-                      "Студент ОП #{ep.upcase} / ЄДЕБО ID #{student.edebo_study_card} / створено #{Time.now.strftime('%Y-%m-%d')}," +
-                      FACULTIES[student.faculty_name.strip] + " # ОП " + ep.upcase + "," +
+                      "#{student.edebo_study_card}," +
+                      "#{student_of_program} #{ep.upcase} / створено #{Time.now.strftime('%Y-%m-%d')}," +
+                      FACULTIES[student.faculty_name.strip] + " # #{edu_program_type} " + ep.upcase + "," +
                       "TRUE\n"
 
         group_row = "students@nung.edu.ua,#{email},MEMBER,USER\n"
